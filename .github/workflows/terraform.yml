@@ -53,8 +53,9 @@ jobs:
 
     - name: Terraform Plan
       run: |
-        #cd AKS-ACR-TERRAFORM
+        cd AKS-ACR-TERRAFORM
         pwd
+        ls
         terraform plan -input=false
 
     - name: Terraform Apply
