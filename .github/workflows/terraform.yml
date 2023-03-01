@@ -62,4 +62,4 @@ jobs:
       # if: github.ref == 'refs/heads/"main"'
       run: |
         cd AKS-ACR-TERRAFORM
-        terraform destroy -var-file="dev.tfvars" -auto-approve 
+        terraform apply -var-file="dev.tfvars" -auto-approve 
