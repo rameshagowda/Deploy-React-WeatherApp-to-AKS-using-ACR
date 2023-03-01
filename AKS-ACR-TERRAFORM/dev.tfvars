@@ -18,5 +18,5 @@ identity_type = "SystemAssigned"
 
 
 // *** Role Assignment to connect ACR and AKS together ***
-role_definition_name             = "AcrPull"
+role_definition_name             = "Owner" #"AcrPull"
 skip_service_principal_aad_check = true
