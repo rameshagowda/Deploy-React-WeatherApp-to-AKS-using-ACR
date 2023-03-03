@@ -46,7 +46,7 @@ module "aks" {
 }
 
 module "acr" {
-  source              = "./modules/container_registry"
+  source              = "claranet/acr/azurerm"
   resource_group_name = local.resource_group_name
   location            = local.location
   sku                 = "Standard"
