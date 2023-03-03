@@ -12,7 +12,7 @@ terraform {
  #   container_name       = "terraform-state-container"
  #   key                  = "aks-cluster.tfstate"
  # }
-#}
+}
 
 provider "azurerm" {
   features {}
