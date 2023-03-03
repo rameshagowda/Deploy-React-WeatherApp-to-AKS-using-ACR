@@ -2,7 +2,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.46"
+      version = "~> 3.3"
     }
   }
 
@@ -28,7 +28,7 @@ locals {
 }
 
 module "aks" {
-  source              = "Azure/kubernetes-engine/azurerm"
+  source              = "Azure/aks/azurerm"
   resource_group_name = local.resource_group_name
   location            = local.location
   client_id           = var.client_id
@@ -46,7 +46,7 @@ module "aks" {
 }
 
 module "acr" {
-  source              = "Azure/container-registry/azurerm"
+  source              = "Azure/acr/azurerm"
   resource_group_name = local.resource_group_name
   location            = local.location
   sku                 = "Standard"
