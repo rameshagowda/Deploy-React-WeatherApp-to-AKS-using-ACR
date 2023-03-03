@@ -46,7 +46,7 @@ module "aks" {
 }
 
 module "acr" {
-  source              = "claranet/acr/azurerm"
+  source              = "github.com/imjoseangel/terraform-azurerm-acr"
   resource_group_name = local.resource_group_name
   location            = local.location
   sku                 = "Standard"
