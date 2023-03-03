@@ -46,7 +46,7 @@ module "aks" {
 }
 
 module "acr" {
-  source              = "Azure/acr/azurerm"
+  source              = "./modules/container_registry"
   resource_group_name = local.resource_group_name
   location            = local.location
   sku                 = "Standard"
