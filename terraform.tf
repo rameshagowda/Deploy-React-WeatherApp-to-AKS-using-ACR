@@ -18,50 +18,41 @@ provider "azurerm" {
   features {}
 }
 
-locals {
-  resource_group_name = "rg-aks-01"
-  location            = "eastus"
-  node_count          = 2
-  node_size           = "Standard_D2_v2"
-  cluster_name        = "aks-cluster-01"
-  acr_name            = "acr-01"
+# Create a resource group
+resource "azurerm_resource_group" "rg" {
+  name     = "myResourceGroup"
+  location = "eastus"
 }
 
-module "aks" {
-  source              = "Azure/aks/azurerm"
-  resource_group_name = local.resource_group_name
-  location            = local.location
-  client_id           = var.client_id
-  client_secret       = var.client_secret
-  ssh_key             = var.ssh_key
-  node_count          = local.node_count
-  node_size           = local.node_size
-  cluster_name        = local.cluster_name
-  subnet_prefixes     = [var.subnet_prefix]
-  vnet_subnet_id      = var.vnet_subnet_id
-  dns_service_ip      = var.dns_service_ip
-  service_cidr        = var.service_cidr
-  tags                = var.tags
-  depends_on          = [module.acr]
+# Create an ACR instance
+resource "azurerm_container_registry" "acr" {
+  name                     = "myacr"
+  resource_group_name      = azurerm_resource_group.rg.name
+  location                 = azurerm_resource_group.rg.location
+  sku                      = "Standard"
+  admin_enabled            = false
 }
 
-module "acr" {
-  source              = "github.com/imjoseangel/terraform-azurerm-acr"
-  resource_group_name = local.resource_group_name
-  location            = local.location
-  sku                 = "Standard"
-  name                = local.acr_name
-  admin_enabled       = false
-  tags                = var.tags
+# Create an AKS cluster
+resource "azurerm_kubernetes_cluster" "aks" {
+  name                = "myaks"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  default_node_pool {
+    name       = "default"
+    node_count = 1
+    vm_size    = "Standard_D2_v2"
+  }
+
+  identity {
+    type = "SystemAssigned"
+  }
 }
 
-# Assign ACR Contributor role to AKS service principal
-resource "azurerm_role_assignment" "acr_contributor" {
-  scope              = module.acr.id
-  role_definition_id = data.azurerm_role_definition.acr_contributor.id
-  principal_id       = module.aks.kubelet_identity_object_id
-}
-
-data "azurerm_role_definition" "acr_contributor" {
-  name = "AcrImageSigner"
+# Assign AcrImageSigner role to AKS cluster identity for ACR instance scope
+resource "azurerm_role_assignment" "acr_signer" {
+  scope                = azurerm_container_registry.acr.id
+  role_definition_name = "AcrImageSigner"
+  principal_id         = azurerm_kubernetes_cluster.aks.identity[0].principal_id
 }
