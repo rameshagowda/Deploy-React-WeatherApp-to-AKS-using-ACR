@@ -20,7 +20,7 @@ provider "azurerm" {
 
 # Create a resource group
 resource "azurerm_resource_group" "rg" {
-  name     = "myResourceGroup"
+  name     = "myaksrg"
   location = "eastus"
 }
 
